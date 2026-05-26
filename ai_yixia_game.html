@@ -5,133 +5,69 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>AI一夏 超好玩｜萌趣你画我猜</title>
 <style>
-  :root{
-    --bg1:#ffeef8;--bg2:#e8f5ff;--card:#ffffffcc;--ink:#3a3561;--accent:#7a8cff;
-    --pink:#ff7eb6;--mint:#2ec4b6;--sun:#ffb703;--lav:#b388ff;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:"Microsoft YaHei",sans-serif;color:var(--ink);
-    background:radial-gradient(circle at 10% 10%,#fff6cf 0 15%,transparent 16%),
-               radial-gradient(circle at 90% 20%,#ffd1ec 0 14%,transparent 15%),
-               linear-gradient(135deg,var(--bg1),var(--bg2));}
-  .wrap{max-width:1140px;margin:16px auto;padding:0 14px}
-  .title{display:flex;gap:10px;align-items:center;justify-content:center;font-size:34px;font-weight:900;color:#6b4ad8;text-shadow:0 2px 0 #fff}
-  .subtitle{text-align:center;margin:8px 0 14px;font-size:17px}
-  .layout{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}
-  .card{background:var(--card);backdrop-filter:blur(6px);border-radius:20px;padding:14px;box-shadow:0 10px 24px rgba(87,88,153,.16)}
-  .chips{display:flex;flex-wrap:wrap;gap:8px}.chip{padding:8px 12px;border-radius:999px;background:#fff;font-weight:800}
-  .chip b{color:#6b4ad8}
-  .panel-title{font-size:20px;font-weight:900;margin:2px 0 10px}
-  .teams{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .team{border-radius:14px;padding:10px;color:#fff}.red{background:linear-gradient(135deg,#ff6b8f,#ff8fab)}.blue{background:linear-gradient(135deg,#5a8dff,#7db2ff)}
-  .score{font-size:34px;font-weight:900}
-  .wordbox{background:#fff7d8;border:3px dashed #ffcf67;border-radius:16px;padding:12px;text-align:center;margin-top:10px}
+  :root{--bg1:#ffeef8;--bg2:#e8f5ff;--card:#ffffffcc;--ink:#3a3561;--accent:#7a8cff;--ok:#2ec4b6}
+  *{box-sizing:border-box} body{margin:0;font-family:"Microsoft YaHei",sans-serif;color:var(--ink);background:linear-gradient(135deg,var(--bg1),var(--bg2));}
+  .wrap{max-width:1140px;margin:16px auto;padding:0 14px}.title{text-align:center;font-size:34px;font-weight:900;color:#6b4ad8}
+  .subtitle{text-align:center;margin:8px 0 14px}.layout{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}.card{background:var(--card);border-radius:20px;padding:14px;box-shadow:0 10px 24px rgba(87,88,153,.16)}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}.chip{padding:8px 12px;border-radius:999px;background:#fff;font-weight:800}.teams{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+  .team{border-radius:14px;padding:10px;color:#fff}.red{background:#ff7ea8}.blue{background:#6fa4ff}.score{font-size:34px;font-weight:900}
+  .secret{background:#fff7d8;border:3px dashed #ffcf67;border-radius:16px;padding:12px;text-align:center;margin-top:10px}
   .word{font-size:38px;font-weight:900;color:#ff6b6b}.tip{font-size:16px;margin-top:6px;color:#5f6488}
-  .btns{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
-  button{border:0;border-radius:12px;padding:10px 8px;font-size:17px;font-weight:800;cursor:pointer}
-  .b1{background:#7a8cff;color:#fff}.b2{background:#ffd166}.b3{background:#caffbf}.b4{background:#ffafcc}.b5{background:#bde0fe}.b6{background:#f1c0ff}
-  .status{margin-top:10px;padding:10px;border-radius:12px;background:#eef3ff;font-weight:700}
-  .canvas-wrap{background:#fff;border-radius:16px;padding:10px;border:2px solid #eedfff}
-  canvas{width:100%;height:360px;background:repeating-linear-gradient(#fff,#fff 31px,#f4f7ff 32px);border-radius:12px;cursor:crosshair;border:1px solid #d8defa}
-  .tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-  .dot{width:20px;height:20px;border-radius:50%;display:inline-block;border:2px solid #fff;box-shadow:0 0 0 1px #c9c9c9;cursor:pointer}
-  .stickerbar{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px}
-  .stk{font-size:24px;background:#fff;border:1px solid #ddd;border-radius:10px;padding:6px;cursor:pointer}
-  .cute{font-size:24px;text-align:center;margin-top:8px}
+  .btns{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}button{border:0;border-radius:12px;padding:10px 8px;font-size:17px;font-weight:800;cursor:pointer}
+  .b1{background:#7a8cff;color:#fff}.b2{background:#ffd166}.b3{background:#caffbf}.b4{background:#ffafcc}.b5{background:#bde0fe}.b6{background:#f1c0ff}.status{margin-top:10px;padding:10px;border-radius:12px;background:#eef3ff;font-weight:700}
+  .canvas-wrap{background:#fff;border-radius:16px;padding:10px;border:2px solid #eedfff}canvas{width:100%;height:360px;background:#fff;border-radius:12px;cursor:crosshair;border:1px solid #d8defa}
+  .tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.dot{width:20px;height:20px;border-radius:50%;display:inline-block;cursor:pointer}
+  .mask{position:fixed;inset:0;background:rgba(20,18,40,.72);display:none;align-items:center;justify-content:center;padding:20px;z-index:9}
+  .mask.show{display:flex}.popup{max-width:560px;width:100%;background:#fff;border-radius:18px;padding:18px;text-align:center}
+  .count{font-size:22px;color:var(--ok);font-weight:900}
   @media (max-width:900px){.layout{grid-template-columns:1fr}.btns{grid-template-columns:1fr 1fr}}
 </style>
-</head>
-<body>
+</head><body>
 <div class="wrap">
-  <div class="title">🌈🤖 AI一夏 · 萌趣你画我猜 🎨🐣</div>
-  <p class="subtitle">更可爱、更热闹、图文并茂！红蓝两队轮流作画，猜对加分，一起欢呼吧～</p>
-
+  <div class="title">🌈🤖 AI一夏 · 萌趣你画我猜 🎨</div>
+  <p class="subtitle">修正版：答案默认隐藏，只给小画家短暂展示，避免“看着答案画”。</p>
   <div class="layout">
     <section class="card">
-      <div class="panel-title">📣 比赛看板</div>
-      <div class="chips">
-        <div class="chip">轮次 <b id="round">1</b>/6</div>
-        <div class="chip">当前队伍 <b id="turnTeam">红队</b></div>
-        <div class="chip">倒计时 <b id="timer">45</b>s ⏳</div>
+      <div class="chips"><div class="chip">轮次 <b id="round">1</b>/6</div><div class="chip">当前队伍 <b id="turnTeam">红队</b></div><div class="chip">倒计时 <b id="timer">45</b>s</div></div>
+      <div class="teams"><div class="team red">🔴 红队<div class="score" id="scoreA">0</div></div><div class="team blue">🔵 蓝队<div class="score" id="scoreB">0</div></div></div>
+      <div class="secret">
+        <div>🔒 本区对全班默认隐藏</div>
+        <div class="word" id="wordMasked">请点击“给小画家看词”</div>
+        <div class="tip" id="tipMasked">提示将同步隐藏</div>
+        <div class="btns" style="grid-template-columns:1fr 1fr">
+          <button class="b1" id="showWord">👀 给小画家看词（3秒）</button>
+          <button class="b5" id="newWord">🔄 换词</button>
+        </div>
       </div>
-      <div class="teams" style="margin-top:10px">
-        <div class="team red"><div>🔴 红队</div><div class="score" id="scoreA">0</div></div>
-        <div class="team blue"><div>🔵 蓝队</div><div class="score" id="scoreB">0</div></div>
-      </div>
-
-      <div class="wordbox">
-        <div style="font-size:14px">👀 仅给“小画家”看</div>
-        <div id="word" class="word">机器人老师</div>
-        <div id="tip" class="tip">提示：上课、讲台、AI</div>
-      </div>
-
-      <div class="btns">
-        <button class="b1" id="newWord">🔄 换词</button>
-        <button class="b2" id="start">▶ 开始</button>
-        <button class="b5" id="pause">⏸ 暂停</button>
-        <button class="b3" id="correct">✅ 猜对+10</button>
-        <button class="b4" id="skip">⏭ 跳过</button>
-        <button class="b6" id="nextRound">➡ 下一轮</button>
-      </div>
-      <div class="btns" style="grid-template-columns:1fr">
-        <button class="b5" id="reset">🔁 重置整局</button>
-      </div>
-      <div id="status" class="status">准备好啦！先让小画家看词，再点击“开始”。</div>
-      <div class="cute">🐰✨ “不会AI也没关系，画画表达也超棒！” ✨🐰</div>
+      <div class="btns"><button class="b2" id="start">▶ 开始</button><button class="b5" id="pause">⏸ 暂停</button><button class="b3" id="correct">✅ 猜对+10</button><button class="b4" id="skip">⏭ 跳过</button><button class="b6" id="nextRound">➡ 下一轮</button><button class="b5" id="reset">🔁 重置整局</button></div>
+      <div id="status" class="status">先让小画家点击“给小画家看词（3秒）”，其余同学闭眼或转身。</div>
     </section>
-
     <section class="card">
-      <div class="panel-title">🖌 画画区（可直接在屏幕上画）</div>
-      <div class="canvas-wrap">
-        <canvas id="board" width="520" height="360"></canvas>
-        <div class="tools">
-          <button id="clear">清空画板</button>
-          <button id="eraser">橡皮擦</button>
-          <button id="thin">细笔</button>
-          <button id="thick">粗笔</button>
-          <span class="dot" data-c="#333" style="background:#333"></span>
-          <span class="dot" data-c="#ff5d8f" style="background:#ff5d8f"></span>
-          <span class="dot" data-c="#5a8dff" style="background:#5a8dff"></span>
-          <span class="dot" data-c="#2ec4b6" style="background:#2ec4b6"></span>
-          <span class="dot" data-c="#ff9f1c" style="background:#ff9f1c"></span>
-        </div>
-        <div class="stickerbar">
-          <button class="stk">🤖</button><button class="stk">☁️</button><button class="stk">⭐</button><button class="stk">🎈</button><button class="stk">🌸</button>
-        </div>
-      </div>
+      <div>🖌 画画区</div><div class="canvas-wrap"><canvas id="board" width="520" height="360"></canvas>
+      <div class="tools"><button id="clear">清空</button><button id="eraser">橡皮擦</button><button id="thin">细笔</button><button id="thick">粗笔</button><span class="dot" data-c="#333" style="background:#333"></span><span class="dot" data-c="#ff5d8f" style="background:#ff5d8f"></span><span class="dot" data-c="#5a8dff" style="background:#5a8dff"></span></div></div>
     </section>
   </div>
 </div>
+<div class="mask" id="mask"><div class="popup"><h2>仅给小画家看 👀</h2><div class="word" id="word">机器人老师</div><div class="tip" id="tip">提示：上课、讲台、AI</div><p class="count" id="count">3 秒后自动隐藏</p></div></div>
 <script>
-const words=[{w:'机器人老师',t:'上课、讲台、AI'},{w:'AI画画助手',t:'画笔、屏幕、颜色'},{w:'会巡逻的机器狗',t:'四条腿、校园、安全'},{w:'会跳舞的无人机',t:'天空、旋转、灯光'},{w:'未来智能教室',t:'黑板、平板、语音'},{w:'魔法翻译耳机',t:'耳机、语言、对话'},{w:'AI音乐小乐队',t:'音符、乐器、节奏'}];
+const words=[{w:'机器人老师',t:'上课、讲台、AI'},{w:'AI画画助手',t:'画笔、屏幕、颜色'},{w:'会巡逻的机器狗',t:'四条腿、校园、安全'},{w:'会跳舞的无人机',t:'天空、旋转、灯光'},{w:'未来智能教室',t:'黑板、平板、语音'},{w:'魔法翻译耳机',t:'耳机、语言、对话'}];
 let round=1,maxRound=6,team=0,score=[0,0],left=45,timer=null,current=0;
-const $=id=>document.getElementById(id);const roundEl=$('round'),turnTeam=$('turnTeam'),timerEl=$('timer'),scoreA=$('scoreA'),scoreB=$('scoreB'),wordEl=$('word'),tipEl=$('tip'),statusEl=$('status');
-function renderWord(){const o=words[current];wordEl.textContent=o.w;tipEl.textContent='提示：'+o.t}
+const $=id=>document.getElementById(id),roundEl=$('round'),turnTeam=$('turnTeam'),timerEl=$('timer'),scoreA=$('scoreA'),scoreB=$('scoreB'),wordEl=$('word'),tipEl=$('tip'),wordMasked=$('wordMasked'),tipMasked=$('tipMasked'),statusEl=$('status');
+function renderWord(){const o=words[current];wordEl.textContent=o.w;tipEl.textContent='提示：'+o.t;wordMasked.textContent='词语已隐藏';tipMasked.textContent='提示已隐藏'}
 function pickWord(){current=Math.floor(Math.random()*words.length);renderWord()}
 function setTeam(){turnTeam.textContent=team===0?'红队':'蓝队'}
-function tick(){left--;timerEl.textContent=left;if(left<=0){stop();statusEl.textContent='⏰ 时间到！点击“下一轮”换队继续。';}}
-function start(){if(timer) return;statusEl.textContent='开始作画！同队快抢答～';timer=setInterval(tick,1000)}
-function stop(){clearInterval(timer);timer=null}
-function updateScore(){scoreA.textContent=score[0];scoreB.textContent=score[1]}
-function addScore(){score[team]+=10;updateScore();statusEl.textContent='答对啦！+10 分，太棒啦🎉';pickWord()}
-function skipWord(){pickWord();statusEl.textContent='已换词，继续冲鸭！'}
-function nextRound(){stop();round++;if(round>maxRound){endGame();return;}team=1-team;left=45;timerEl.textContent=left;roundEl.textContent=round;setTeam();pickWord();statusEl.textContent='换队完成，请新小画家看词后开始。'}
-function endGame(){stop();let msg='平局，大家都超棒！';if(score[0]>score[1])msg='红队获胜！';if(score[1]>score[0])msg='蓝队获胜！';statusEl.textContent=`游戏结束：${msg}（红队 ${score[0]} : 蓝队 ${score[1]}）`}
-function resetAll(){stop();round=1;team=0;score=[0,0];left=45;roundEl.textContent=1;timerEl.textContent=45;setTeam();updateScore();pickWord();statusEl.textContent='已重置，重新开始欢乐局！';clearBoard()}
-$('newWord').onclick=pickWord;$('start').onclick=start;$('pause').onclick=stop;$('correct').onclick=addScore;$('skip').onclick=skipWord;$('nextRound').onclick=nextRound;$('reset').onclick=resetAll;
+function tick(){left--;timerEl.textContent=left;if(left<=0){stop();statusEl.textContent='⏰ 时间到！点击“下一轮”。';}}
+function start(){if(timer) return;statusEl.textContent='开始作画！';timer=setInterval(tick,1000)} function stop(){clearInterval(timer);timer=null}
+function updateScore(){scoreA.textContent=score[0];scoreB.textContent=score[1]} function addScore(){score[team]+=10;updateScore();statusEl.textContent='答对+10！';pickWord()}
+function skipWord(){pickWord();statusEl.textContent='已换词';}
+function nextRound(){stop();round++;if(round>maxRound)return endGame();team=1-team;left=45;timerEl.textContent=left;roundEl.textContent=round;setTeam();pickWord();statusEl.textContent='换队完成：先给新小画家看词';}
+function endGame(){stop();let msg='平局';if(score[0]>score[1])msg='红队获胜';if(score[1]>score[0])msg='蓝队获胜';statusEl.textContent=`游戏结束：${msg}（红队 ${score[0]} : 蓝队 ${score[1]}）`}
+function resetAll(){stop();round=1;team=0;score=[0,0];left=45;roundEl.textContent=1;timerEl.textContent=45;setTeam();updateScore();pickWord();statusEl.textContent='已重置';clearBoard()}
+function showSecret(sec=3){const m=$('mask'),c=$('count');m.classList.add('show');let n=sec;c.textContent=`${n} 秒后自动隐藏`;const iv=setInterval(()=>{n--;c.textContent=`${n} 秒后自动隐藏`;if(n<=0){clearInterval(iv);m.classList.remove('show')}},1000)}
+$('showWord').onclick=()=>showSecret(3);$('newWord').onclick=pickWord;$('start').onclick=start;$('pause').onclick=stop;$('correct').onclick=addScore;$('skip').onclick=skipWord;$('nextRound').onclick=nextRound;$('reset').onclick=resetAll;
 setTeam();updateScore();pickWord();
-
-const canvas=$('board'),ctx=canvas.getContext('2d');let drawing=false,color='#333',size=4;
-function pos(e){const r=canvas.getBoundingClientRect();const p=e.touches?e.touches[0]:e;return{x:(p.clientX-r.left)*(canvas.width/r.width),y:(p.clientY-r.top)*(canvas.height/r.height)}}
-function startDraw(e){drawing=true;const p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y)}
-function draw(e){if(!drawing) return;const p=pos(e);ctx.lineTo(p.x,p.y);ctx.strokeStyle=color;ctx.lineWidth=size;ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke()}
-function endDraw(){drawing=false}
-canvas.addEventListener('mousedown',startDraw);canvas.addEventListener('mousemove',draw);window.addEventListener('mouseup',endDraw);
-canvas.addEventListener('touchstart',e=>{e.preventDefault();startDraw(e)},{passive:false});canvas.addEventListener('touchmove',e=>{e.preventDefault();draw(e)},{passive:false});window.addEventListener('touchend',endDraw);
-function clearBoard(){ctx.clearRect(0,0,canvas.width,canvas.height)}
-$('clear').onclick=clearBoard;$('eraser').onclick=()=>{color='#fff';size=20};$('thin').onclick=()=>size=4;$('thick').onclick=()=>size=10;
-document.querySelectorAll('.dot').forEach(d=>d.onclick=()=>{color=d.dataset.c});
-document.querySelectorAll('.stk').forEach(b=>b.onclick=()=>{ctx.font='42px serif';ctx.fillText(b.textContent,Math.random()*430+20,Math.random()*300+40)});
-</script>
-</body>
-</html>
+const canvas=$('board'),ctx=canvas.getContext('2d');let drawing=false,color='#333',size=4;function pos(e){const r=canvas.getBoundingClientRect();const p=e.touches?e.touches[0]:e;return{x:(p.clientX-r.left)*(canvas.width/r.width),y:(p.clientY-r.top)*(canvas.height/r.height)}}
+function startDraw(e){drawing=true;const p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y)} function draw(e){if(!drawing)return;const p=pos(e);ctx.lineTo(p.x,p.y);ctx.strokeStyle=color;ctx.lineWidth=size;ctx.lineCap='round';ctx.stroke()} function endDraw(){drawing=false}
+canvas.addEventListener('mousedown',startDraw);canvas.addEventListener('mousemove',draw);window.addEventListener('mouseup',endDraw);canvas.addEventListener('touchstart',e=>{e.preventDefault();startDraw(e)},{passive:false});canvas.addEventListener('touchmove',e=>{e.preventDefault();draw(e)},{passive:false});window.addEventListener('touchend',endDraw);
+function clearBoard(){ctx.clearRect(0,0,canvas.width,canvas.height)} $('clear').onclick=clearBoard;$('eraser').onclick=()=>{color='#fff';size=20};$('thin').onclick=()=>size=4;$('thick').onclick=()=>size=10;document.querySelectorAll('.dot').forEach(d=>d.onclick=()=>color=d.dataset.c);
+</script></body></html>
