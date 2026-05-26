@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI一夏 超好玩｜低年级图标版</title>
+  <style>
+    :root { --bg:#f4f8ff; --card:#fff; --ink:#1f3152; --accent:#5a86ff; --ok:#1ea97c; --bad:#e24d6a; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:"Microsoft YaHei",sans-serif; background:var(--bg); color:var(--ink); }
+    .wrap { max-width: 900px; margin: 18px auto; padding: 0 14px; }
+    .card { background:var(--card); border-radius:18px; padding:18px; box-shadow:0 8px 24px rgba(30,68,130,.1); }
+    h1 { margin: 0 0 8px; font-size: 30px; }
+    .desc { margin:0 0 14px; color:#40557a; line-height:1.8; font-size:18px; }
+    .stats { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
+    .pill { background:#e7efff; border-radius:999px; padding:8px 14px; font-weight:700; font-size:18px; }
+    .question { font-size:28px; margin: 12px 0; }
+    .icon-grid { display:grid; grid-template-columns: repeat(3,1fr); gap:12px; }
+    .icon-btn {
+      border:0; border-radius:14px; background:#f2f6ff; cursor:pointer;
+      padding:12px 8px; min-height:130px; text-align:center;
+      box-shadow: inset 0 0 0 2px transparent;
+    }
+    .icon-btn:hover { background:#e5eeff; }
+    .emoji { font-size:54px; line-height:1; display:block; margin-top:2px; }
+    .label { display:block; margin-top:8px; font-size:22px; font-weight:700; }
+    .result { min-height:36px; margin-top:14px; font-size:22px; font-weight:800; }
+    .ok { color:var(--ok); } .bad { color:var(--bad); }
+    .tools { display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; }
+    .btn { border:0; border-radius:10px; padding:12px 16px; font-size:20px; cursor:pointer; }
+    .primary { background:var(--accent); color:#fff; }
+    .ghost { background:#edf2ff; color:#234; }
+    .hidden { display:none; }
+    .final { font-size:21px; line-height:1.8; }
+    .badge { font-size:58px; }
+    @media (max-width:720px){ .icon-grid{ grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>🤖 AI小侦探（低年级图标版）</h1>
+    <p class="desc">看图标选答案！每题选 1 个最合适图标。答对 +10 分，闯关成功拿称号～</p>
+
+    <div class="stats">
+      <div class="pill">题目：<span id="qIndex">1</span>/<span id="qTotal">5</span></div>
+      <div class="pill">得分：<span id="score">0</span></div>
+    </div>
+
+    <div id="quizArea">
+      <div class="question" id="question"></div>
+      <div id="options" class="icon-grid"></div>
+      <div id="result" class="result"></div>
+      <div class="tools">
+        <button class="btn primary" id="nextBtn" disabled>下一题</button>
+        <button class="btn ghost" id="restartBtn">重来</button>
+      </div>
+    </div>
+
+    <div id="finalArea" class="hidden final">
+      <div class="badge" id="badge">🌟</div>
+      <h2>闯关完成！</h2>
+      <p id="summary"></p>
+      <p><b>班级展示任务：</b>说一句你最喜欢的 AI 用法，再画一张“AI帮我过六一”的小海报。</p>
+      <button class="btn primary" id="playAgain">再玩一次</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    q:'1）AI最适合做什么？',
+    opts:[
+      {emoji:'🤝', text:'帮学习'},
+      {emoji:'🧠', text:'全替代'},
+      {emoji:'❌', text:'永不出错'}
+    ],
+    a:0, explain:'AI是小帮手，我们还要自己思考。'
+  },
+  {
+    q:'2）答案不确定怎么办？',
+    opts:[
+      {emoji:'✅', text:'问老师家长'},
+      {emoji:'📤', text:'直接发群'},
+      {emoji:'📋', text:'马上照抄'}
+    ],
+    a:0, explain:'要学会核对信息。'
+  },
+  {
+    q:'3）AI画图提示词怎么写更好？',
+    opts:[
+      {emoji:'🎯', text:'说清主题'},
+      {emoji:'🤷', text:'随便写写'},
+      {emoji:'🔮', text:'让它猜'}
+    ],
+    a:0, explain:'写得越清楚，画得越像想要的样子。'
+  },
+  {
+    q:'4）哪个最安全？',
+    opts:[
+      {emoji:'🔒', text:'不发隐私'},
+      {emoji:'🏠', text:'发住址'},
+      {emoji:'📱', text:'发电话'}
+    ],
+    a:0, explain:'个人信息要保护好。'
+  },
+  {
+    q:'5）不会AI怎么办？',
+    opts:[
+      {emoji:'🎨', text:'画画也行'},
+      {emoji:'🚫', text:'不能参加'},
+      {emoji:'🧍', text:'只能看着'}
+    ],
+    a:0, explain:'重在参与，每个孩子都能展示创意。'
+  }
+];
+
+let index=0, score=0, locked=false;
+const qIndex=document.getElementById('qIndex');
+const qTotal=document.getElementById('qTotal');
+const scoreEl=document.getElementById('score');
+const qEl=document.getElementById('question');
+const optsEl=document.getElementById('options');
+const resultEl=document.getElementById('result');
+const nextBtn=document.getElementById('nextBtn');
+const restartBtn=document.getElementById('restartBtn');
+const quizArea=document.getElementById('quizArea');
+const finalArea=document.getElementById('finalArea');
+const summary=document.getElementById('summary');
+const badge=document.getElementById('badge');
+const playAgain=document.getElementById('playAgain');
+qTotal.textContent = questions.length;
+
+function render(){
+  locked=false;
+  nextBtn.disabled=true;
+  resultEl.textContent='';
+  resultEl.className='result';
+  qIndex.textContent=index+1;
+  scoreEl.textContent=score;
+  const item=questions[index];
+  qEl.textContent=item.q;
+  optsEl.innerHTML='';
+  item.opts.forEach((opt,i)=>{
+    const b=document.createElement('button');
+    b.className='icon-btn';
+    b.innerHTML=`<span class="emoji">${opt.emoji}</span><span class="label">${opt.text}</span>`;
+    b.onclick=()=>choose(i,b);
+    optsEl.appendChild(b);
+  });
+}
+
+function choose(i,btn){
+  if(locked) return;
+  locked=true;
+  const item=questions[index];
+  const buttons=[...optsEl.querySelectorAll('button')];
+  buttons.forEach((b,idx)=>{
+    b.disabled=true;
+    if(idx===item.a){ b.style.background='#daf6ea'; b.style.boxShadow='inset 0 0 0 2px #1ea97c'; }
+  });
+  if(i===item.a){
+    score += 10;
+    resultEl.textContent='答对啦！' + item.explain;
+    resultEl.classList.add('ok');
+  }else{
+    btn.style.background='#ffdfe6';
+    btn.style.boxShadow='inset 0 0 0 2px #e24d6a';
+    resultEl.textContent='再想想～' + item.explain;
+    resultEl.classList.add('bad');
+  }
+  scoreEl.textContent=score;
+  nextBtn.disabled=false;
+}
+
+function endGame(){
+  quizArea.classList.add('hidden');
+  finalArea.classList.remove('hidden');
+  let t='AI小新星', e='🌱';
+  if(score>=40){ t='AI创意达人'; e='🚀'; }
+  else if(score>=30){ t='AI探索者'; e='🌟'; }
+  badge.textContent=e;
+  summary.textContent=`你得了 ${score} 分！称号：${t}。请用一句话说说“AI能怎么帮助我”。`;
+}
+
+function reset(){
+  index=0; score=0;
+  quizArea.classList.remove('hidden');
+  finalArea.classList.add('hidden');
+  render();
+}
+
+nextBtn.onclick=()=>{ index++; if(index>=questions.length) endGame(); else render(); };
+restartBtn.onclick=reset;
+playAgain.onclick=reset;
+render();
+</script>
+</body>
+</html>
