@@ -1,200 +1,95 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI一夏 超好玩｜低年级图标版</title>
-  <style>
-    :root { --bg:#f4f8ff; --card:#fff; --ink:#1f3152; --accent:#5a86ff; --ok:#1ea97c; --bad:#e24d6a; }
-    * { box-sizing: border-box; }
-    body { margin:0; font-family:"Microsoft YaHei",sans-serif; background:var(--bg); color:var(--ink); }
-    .wrap { max-width: 900px; margin: 18px auto; padding: 0 14px; }
-    .card { background:var(--card); border-radius:18px; padding:18px; box-shadow:0 8px 24px rgba(30,68,130,.1); }
-    h1 { margin: 0 0 8px; font-size: 30px; }
-    .desc { margin:0 0 14px; color:#40557a; line-height:1.8; font-size:18px; }
-    .stats { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
-    .pill { background:#e7efff; border-radius:999px; padding:8px 14px; font-weight:700; font-size:18px; }
-    .question { font-size:28px; margin: 12px 0; }
-    .icon-grid { display:grid; grid-template-columns: repeat(3,1fr); gap:12px; }
-    .icon-btn {
-      border:0; border-radius:14px; background:#f2f6ff; cursor:pointer;
-      padding:12px 8px; min-height:130px; text-align:center;
-      box-shadow: inset 0 0 0 2px transparent;
-    }
-    .icon-btn:hover { background:#e5eeff; }
-    .emoji { font-size:54px; line-height:1; display:block; margin-top:2px; }
-    .label { display:block; margin-top:8px; font-size:22px; font-weight:700; }
-    .result { min-height:36px; margin-top:14px; font-size:22px; font-weight:800; }
-    .ok { color:var(--ok); } .bad { color:var(--bad); }
-    .tools { display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; }
-    .btn { border:0; border-radius:10px; padding:12px 16px; font-size:20px; cursor:pointer; }
-    .primary { background:var(--accent); color:#fff; }
-    .ghost { background:#edf2ff; color:#234; }
-    .hidden { display:none; }
-    .final { font-size:21px; line-height:1.8; }
-    .badge { font-size:58px; }
-    @media (max-width:720px){ .icon-grid{ grid-template-columns: 1fr; } }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI一夏 超好玩｜欢乐版你画我猜</title>
+<style>
+  :root{--bg:#f6f9ff;--card:#fff;--ink:#1f3152;--accent:#5b86ff;--ok:#18a06f;--warn:#ff9f43}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:"Microsoft YaHei",sans-serif}
+  .wrap{max-width:1000px;margin:18px auto;padding:0 14px}.card{background:var(--card);border-radius:16px;padding:16px;box-shadow:0 8px 24px rgba(30,68,130,.1)}
+  h1{margin:0 0 8px;font-size:30px}.desc{margin:0 0 12px;line-height:1.7}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.pill{background:#e8efff;border-radius:999px;padding:8px 14px;font-weight:700}
+  .teams{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}.team{background:#f3f6ff;border-radius:12px;padding:12px}
+  .team h3{margin:0 0 8px}.score{font-size:26px;font-weight:800}.btn{border:0;border-radius:10px;padding:10px 14px;font-size:18px;cursor:pointer}
+  .primary{background:var(--accent);color:#fff}.ghost{background:#eef2ff}.good{background:#dcf6ea}.warn{background:#ffe9d3}
+  .prompt{margin-top:10px;background:#fff7e8;border:2px dashed #ffc66f;border-radius:14px;padding:14px;text-align:center}
+  .word{font-size:42px;font-weight:900;letter-spacing:2px}.tip{margin-top:8px;font-size:18px;color:#4a5f84}
+  .timer{font-size:36px;font-weight:900}.mini{font-size:14px;color:#5870a0}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+  @media (max-width:760px){.teams{grid-template-columns:1fr}.word{font-size:34px}.grid{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
-<div class="wrap">
-  <div class="card">
-    <h1>🤖 AI小侦探（低年级图标版）</h1>
-    <p class="desc">看图标选答案！每题选 1 个最合适图标。答对 +10 分，闯关成功拿称号～</p>
+<div class="wrap"><div class="card">
+  <h1>🎉 AI 欢乐你画我猜（全班互动版）</h1>
+  <p class="desc">玩法：分成红蓝两队。每轮1位“小画家”抽词并画图（不能写字），同队同学抢答。答对加分！6轮后总分高者获胜。</p>
 
-    <div class="stats">
-      <div class="pill">题目：<span id="qIndex">1</span>/<span id="qTotal">5</span></div>
-      <div class="pill">得分：<span id="score">0</span></div>
-    </div>
+  <div class="row">
+    <div class="pill">轮次：<span id="round">1</span>/6</div>
+    <div class="pill">当前队伍：<span id="turnTeam">红队</span></div>
+    <div class="pill">倒计时：<span id="timer" class="timer">45</span>s</div>
+  </div>
 
-    <div id="quizArea">
-      <div class="question" id="question"></div>
-      <div id="options" class="icon-grid"></div>
-      <div id="result" class="result"></div>
-      <div class="tools">
-        <button class="btn primary" id="nextBtn" disabled>下一题</button>
-        <button class="btn ghost" id="restartBtn">重来</button>
-      </div>
-    </div>
+  <div class="teams">
+    <div class="team"><h3>🔴 红队</h3><div class="score" id="scoreA">0</div></div>
+    <div class="team"><h3>🔵 蓝队</h3><div class="score" id="scoreB">0</div></div>
+  </div>
 
-    <div id="finalArea" class="hidden final">
-      <div class="badge" id="badge">🌟</div>
-      <h2>闯关完成！</h2>
-      <p id="summary"></p>
-      <p><b>班级展示任务：</b>说一句你最喜欢的 AI 用法，再画一张“AI帮我过六一”的小海报。</p>
-      <button class="btn primary" id="playAgain">再玩一次</button>
+  <div class="prompt">
+    <div class="mini">给“小画家”看的词（可点击换词）</div>
+    <div class="word" id="word">机器人老师</div>
+    <div class="tip" id="tip">提示：上课、讲台、AI</div>
+    <div class="grid">
+      <button class="btn ghost" id="newWord">🔄 换一个词</button>
+      <button class="btn primary" id="start">▶️ 开始本轮</button>
+      <button class="btn ghost" id="pause">⏸️ 暂停</button>
     </div>
   </div>
-</div>
+
+  <div class="row" style="margin-top:12px">
+    <button class="btn good" id="correct">✅ 猜对了（+10）</button>
+    <button class="btn warn" id="skip">⏭️ 跳过（不加分）</button>
+    <button class="btn ghost" id="nextRound">➡️ 下一轮（换队）</button>
+    <button class="btn ghost" id="reset">🔁 重置整局</button>
+  </div>
+
+  <p id="status" class="desc" style="margin-top:10px;font-weight:700">准备就绪：请先让本轮小画家看词，再点击“开始本轮”。</p>
+</div></div>
 
 <script>
-const questions = [
-  {
-    q:'1）AI最适合做什么？',
-    opts:[
-      {emoji:'🤝', text:'帮学习'},
-      {emoji:'🧠', text:'全替代'},
-      {emoji:'❌', text:'永不出错'}
-    ],
-    a:0, explain:'AI是小帮手，我们还要自己思考。'
-  },
-  {
-    q:'2）答案不确定怎么办？',
-    opts:[
-      {emoji:'✅', text:'问老师家长'},
-      {emoji:'📤', text:'直接发群'},
-      {emoji:'📋', text:'马上照抄'}
-    ],
-    a:0, explain:'要学会核对信息。'
-  },
-  {
-    q:'3）AI画图提示词怎么写更好？',
-    opts:[
-      {emoji:'🎯', text:'说清主题'},
-      {emoji:'🤷', text:'随便写写'},
-      {emoji:'🔮', text:'让它猜'}
-    ],
-    a:0, explain:'写得越清楚，画得越像想要的样子。'
-  },
-  {
-    q:'4）哪个最安全？',
-    opts:[
-      {emoji:'🔒', text:'不发隐私'},
-      {emoji:'🏠', text:'发住址'},
-      {emoji:'📱', text:'发电话'}
-    ],
-    a:0, explain:'个人信息要保护好。'
-  },
-  {
-    q:'5）不会AI怎么办？',
-    opts:[
-      {emoji:'🎨', text:'画画也行'},
-      {emoji:'🚫', text:'不能参加'},
-      {emoji:'🧍', text:'只能看着'}
-    ],
-    a:0, explain:'重在参与，每个孩子都能展示创意。'
-  }
+const words=[
+  {w:'机器人老师',t:'上课、讲台、AI'},
+  {w:'会说话的书包',t:'书本、声音、智能'},
+  {w:'AI画画助手',t:'画笔、屏幕、颜色'},
+  {w:'垃圾分类机器人',t:'回收桶、环保、机械手'},
+  {w:'会跳舞的无人机',t:'天空、旋转、灯光'},
+  {w:'未来智能教室',t:'黑板、平板、语音'},
+  {w:'AI天气播报员',t:'太阳云朵、话筒'},
+  {w:'会巡逻的机器狗',t:'四条腿、校园、安全'},
+  {w:'魔法翻译耳机',t:'耳机、语言、对话'},
+  {w:'AI音乐小乐队',t:'音符、乐器、节奏'}
 ];
+let round=1,maxRound=6,team=0,score=[0,0],left=45,timer=null,current=0;
+const roundEl=doc('round'),turnTeam=doc('turnTeam'),timerEl=doc('timer'),scoreA=doc('scoreA'),scoreB=doc('scoreB');
+const wordEl=doc('word'),tipEl=doc('tip'),statusEl=doc('status');
+function doc(id){return document.getElementById(id)}
+function renderWord(){const o=words[current];wordEl.textContent=o.w;tipEl.textContent='提示：'+o.t}
+function pickWord(){current=Math.floor(Math.random()*words.length);renderWord();}
+function setTeam(){turnTeam.textContent=team===0?'红队':'蓝队'}
+function tick(){left--;timerEl.textContent=left;if(left<=0){stop();statusEl.textContent='⏰ 时间到！请点击“下一轮（换队）”。';}}
+function start(){if(timer) return;statusEl.textContent='开始作画！同队同学快抢答～';timer=setInterval(tick,1000)}
+function stop(){clearInterval(timer);timer=null}
+function addScore(){score[team]+=10;updateScore();statusEl.textContent='太棒了！本轮猜对 +10 分。可继续画下一个词或下一轮。';pickWord();}
+function updateScore(){scoreA.textContent=score[0];scoreB.textContent=score[1]}
+function nextRound(){stop();round++;if(round>maxRound){endGame();return;} team=1-team;left=45;timerEl.textContent=left;roundEl.textContent=round;setTeam();pickWord();statusEl.textContent='换队完成！先让新小画家看词，再开始本轮。';}
+function skipWord(){pickWord();statusEl.textContent='已跳过，换新词继续！';}
+function resetAll(){stop();round=1;team=0;score=[0,0];left=45;roundEl.textContent=1;timerEl.textContent=45;setTeam();updateScore();pickWord();statusEl.textContent='已重置，重新开始欢乐对战！';}
+function endGame(){stop();let msg='平局！两队都超棒！';if(score[0]>score[1]) msg='🎊 红队获胜！';if(score[1]>score[0]) msg='🎊 蓝队获胜！';statusEl.textContent=`游戏结束：${msg}（红队 ${score[0]} : 蓝队 ${score[1]}）`}
 
-let index=0, score=0, locked=false;
-const qIndex=document.getElementById('qIndex');
-const qTotal=document.getElementById('qTotal');
-const scoreEl=document.getElementById('score');
-const qEl=document.getElementById('question');
-const optsEl=document.getElementById('options');
-const resultEl=document.getElementById('result');
-const nextBtn=document.getElementById('nextBtn');
-const restartBtn=document.getElementById('restartBtn');
-const quizArea=document.getElementById('quizArea');
-const finalArea=document.getElementById('finalArea');
-const summary=document.getElementById('summary');
-const badge=document.getElementById('badge');
-const playAgain=document.getElementById('playAgain');
-qTotal.textContent = questions.length;
-
-function render(){
-  locked=false;
-  nextBtn.disabled=true;
-  resultEl.textContent='';
-  resultEl.className='result';
-  qIndex.textContent=index+1;
-  scoreEl.textContent=score;
-  const item=questions[index];
-  qEl.textContent=item.q;
-  optsEl.innerHTML='';
-  item.opts.forEach((opt,i)=>{
-    const b=document.createElement('button');
-    b.className='icon-btn';
-    b.innerHTML=`<span class="emoji">${opt.emoji}</span><span class="label">${opt.text}</span>`;
-    b.onclick=()=>choose(i,b);
-    optsEl.appendChild(b);
-  });
-}
-
-function choose(i,btn){
-  if(locked) return;
-  locked=true;
-  const item=questions[index];
-  const buttons=[...optsEl.querySelectorAll('button')];
-  buttons.forEach((b,idx)=>{
-    b.disabled=true;
-    if(idx===item.a){ b.style.background='#daf6ea'; b.style.boxShadow='inset 0 0 0 2px #1ea97c'; }
-  });
-  if(i===item.a){
-    score += 10;
-    resultEl.textContent='答对啦！' + item.explain;
-    resultEl.classList.add('ok');
-  }else{
-    btn.style.background='#ffdfe6';
-    btn.style.boxShadow='inset 0 0 0 2px #e24d6a';
-    resultEl.textContent='再想想～' + item.explain;
-    resultEl.classList.add('bad');
-  }
-  scoreEl.textContent=score;
-  nextBtn.disabled=false;
-}
-
-function endGame(){
-  quizArea.classList.add('hidden');
-  finalArea.classList.remove('hidden');
-  let t='AI小新星', e='🌱';
-  if(score>=40){ t='AI创意达人'; e='🚀'; }
-  else if(score>=30){ t='AI探索者'; e='🌟'; }
-  badge.textContent=e;
-  summary.textContent=`你得了 ${score} 分！称号：${t}。请用一句话说说“AI能怎么帮助我”。`;
-}
-
-function reset(){
-  index=0; score=0;
-  quizArea.classList.remove('hidden');
-  finalArea.classList.add('hidden');
-  render();
-}
-
-nextBtn.onclick=()=>{ index++; if(index>=questions.length) endGame(); else render(); };
-restartBtn.onclick=reset;
-playAgain.onclick=reset;
-render();
+doc('newWord').onclick=pickWord; doc('start').onclick=start; doc('pause').onclick=stop;
+doc('correct').onclick=addScore; doc('skip').onclick=skipWord; doc('nextRound').onclick=nextRound; doc('reset').onclick=resetAll;
+setTeam();updateScore();pickWord();
 </script>
 </body>
 </html>
