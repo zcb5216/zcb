@@ -3,71 +3,148 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>AI一夏 超好玩｜萌趣你画我猜</title>
+<title>AI一夏 超好玩｜星际画猜总部</title>
 <style>
-  :root{--bg1:#ffeef8;--bg2:#e8f5ff;--card:#ffffffcc;--ink:#3a3561;--accent:#7a8cff;--ok:#2ec4b6}
-  *{box-sizing:border-box} body{margin:0;font-family:"Microsoft YaHei",sans-serif;color:var(--ink);background:linear-gradient(135deg,var(--bg1),var(--bg2));}
-  .wrap{max-width:1140px;margin:16px auto;padding:0 14px}.title{text-align:center;font-size:34px;font-weight:900;color:#6b4ad8}
-  .subtitle{text-align:center;margin:8px 0 14px}.layout{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}.card{background:var(--card);border-radius:20px;padding:14px;box-shadow:0 10px 24px rgba(87,88,153,.16)}
-  .chips{display:flex;flex-wrap:wrap;gap:8px}.chip{padding:8px 12px;border-radius:999px;background:#fff;font-weight:800}.teams{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-  .team{border-radius:14px;padding:10px;color:#fff}.red{background:#ff7ea8}.blue{background:#6fa4ff}.score{font-size:34px;font-weight:900}
-  .secret{background:#fff7d8;border:3px dashed #ffcf67;border-radius:16px;padding:12px;text-align:center;margin-top:10px}
-  .word{font-size:38px;font-weight:900;color:#ff6b6b}.tip{font-size:16px;margin-top:6px;color:#5f6488}
-  .btns{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}button{border:0;border-radius:12px;padding:10px 8px;font-size:17px;font-weight:800;cursor:pointer}
-  .b1{background:#7a8cff;color:#fff}.b2{background:#ffd166}.b3{background:#caffbf}.b4{background:#ffafcc}.b5{background:#bde0fe}.b6{background:#f1c0ff}.status{margin-top:10px;padding:10px;border-radius:12px;background:#eef3ff;font-weight:700}
-  .canvas-wrap{background:#fff;border-radius:16px;padding:10px;border:2px solid #eedfff}canvas{width:100%;height:360px;background:#fff;border-radius:12px;cursor:crosshair;border:1px solid #d8defa}
-  .tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.dot{width:20px;height:20px;border-radius:50%;display:inline-block;cursor:pointer}
-  .mask{position:fixed;inset:0;background:rgba(20,18,40,.72);display:none;align-items:center;justify-content:center;padding:20px;z-index:9}
-  .mask.show{display:flex}.popup{max-width:560px;width:100%;background:#fff;border-radius:18px;padding:18px;text-align:center}
-  .count{font-size:22px;color:var(--ok);font-weight:900}
-  @media (max-width:900px){.layout{grid-template-columns:1fr}.btns{grid-template-columns:1fr 1fr}}
+  :root{
+    --bg:#060b1d;--bg2:#0b1635;--panel:#0f1d43cc;--line:#2b4b9b;--txt:#e8f1ff;--muted:#a8b9e8;
+    --cyan:#39d8ff;--violet:#8f7bff;--pink:#ff6fd8;--gold:#ffcc66;--ok:#4dffbf;
+  }
+  *{box-sizing:border-box} html,body{height:100%}
+  body{margin:0;color:var(--txt);font-family:"Microsoft YaHei",sans-serif;background:
+    radial-gradient(1200px 700px at 15% -10%,#26489f66,transparent 60%),
+    radial-gradient(900px 600px at 90% 10%,#7a33f066,transparent 60%),
+    linear-gradient(160deg,var(--bg),var(--bg2));}
+  .stars::before,.stars::after{content:"";position:fixed;inset:0;pointer-events:none;background-image:radial-gradient(#ffffff66 1px,transparent 1px);background-size:3px 3px;opacity:.22}
+  .stars::after{background-size:5px 5px;opacity:.1;transform:translateY(1px)}
+  .page{max-width:1400px;margin:0 auto;padding:26px 24px 36px}
+  .hero{padding:28px;border:1px solid #3b63c4;border-radius:22px;background:linear-gradient(130deg,#101f4acc,#12265dcc);box-shadow:0 0 40px #1e3e8a66 inset,0 20px 60px #0008}
+  .title{font-size:48px;font-weight:900;letter-spacing:1px;margin:0;text-shadow:0 0 18px #58c8ff66}
+  .sub{margin:10px 0 0;font-size:18px;color:var(--muted)}
+  .chips{margin-top:18px;display:flex;flex-wrap:wrap;gap:10px}.chip{padding:10px 14px;border-radius:999px;background:#0e2a68;border:1px solid #3e6cd2;font-weight:700}
+  .layout{margin-top:18px;display:grid;grid-template-columns:1.1fr 1.2fr;gap:16px;min-height:68vh}
+  .panel{background:var(--panel);border:1px solid #3458b2;border-radius:18px;padding:16px;backdrop-filter:blur(6px)}
+  .panel h2{margin:0 0 12px;font-size:24px}
+  .teams{display:grid;grid-template-columns:1fr 1fr;gap:12px}.team{padding:14px;border-radius:14px;border:1px solid #fff3}
+  .red{background:linear-gradient(135deg,#9d215499,#ea4f7f99)}.blue{background:linear-gradient(135deg,#21489d99,#4f8be699)}.score{font-size:40px;font-weight:900}
+  .secret{margin-top:12px;padding:14px;border-radius:14px;border:1px dashed #87b8ff;background:#142659cc}
+  .wordMask{font-size:28px;font-weight:900;color:#ffd37a}
+  .btn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+  button,select,input[type=range]{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #5a78c9;background:#17357a;color:#fff;font-weight:700;cursor:pointer}
+  button:hover{filter:brightness(1.08)}
+  .status{margin-top:12px;padding:10px;border-radius:10px;background:#102b66;border:1px solid #355fb9;color:#cfe2ff}
+
+  .draw-wrap{display:grid;grid-template-rows:auto auto 1fr;gap:10px;height:100%}
+  .toolbar{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+  .toolbar2{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:8px}
+  .canvas-shell{position:relative;border:1px solid #3d67c5;border-radius:14px;padding:10px;background:#0c1f4b;height:100%}
+  canvas{width:100%;height:100%;min-height:420px;background:linear-gradient(#f9fbff,#edf3ff);border-radius:10px;cursor:crosshair}
+  .pal{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.dot{width:24px;height:24px;border-radius:50%;border:2px solid #fff6;cursor:pointer}
+  .mask{position:fixed;inset:0;background:#020816dd;display:none;align-items:center;justify-content:center;z-index:9}.mask.show{display:flex}
+  .modal{width:min(640px,92vw);background:#0f2459;border:1px solid #4f73d1;border-radius:16px;padding:20px;text-align:center}
+  .w{font-size:56px;font-weight:900;color:#ffd37a}.t{font-size:22px;color:#d6e5ff}.count{font-size:22px;color:var(--ok);font-weight:900}
+  @media (max-width:1100px){.layout{grid-template-columns:1fr}.toolbar{grid-template-columns:repeat(3,1fr)}.toolbar2{grid-template-columns:1fr 1fr}}
 </style>
-</head><body>
-<div class="wrap">
-  <div class="title">🌈🤖 AI一夏 · 萌趣你画我猜 🎨</div>
-  <p class="subtitle">修正版：答案默认隐藏，只给小画家短暂展示，避免“看着答案画”。</p>
-  <div class="layout">
-    <section class="card">
-      <div class="chips"><div class="chip">轮次 <b id="round">1</b>/6</div><div class="chip">当前队伍 <b id="turnTeam">红队</b></div><div class="chip">倒计时 <b id="timer">45</b>s</div></div>
-      <div class="teams"><div class="team red">🔴 红队<div class="score" id="scoreA">0</div></div><div class="team blue">🔵 蓝队<div class="score" id="scoreB">0</div></div></div>
-      <div class="secret">
-        <div>🔒 本区对全班默认隐藏</div>
-        <div class="word" id="wordMasked">请点击“给小画家看词”</div>
-        <div class="tip" id="tipMasked">提示将同步隐藏</div>
-        <div class="btns" style="grid-template-columns:1fr 1fr">
-          <button class="b1" id="showWord">👀 给小画家看词（3秒）</button>
-          <button class="b5" id="newWord">🔄 换词</button>
-        </div>
+</head>
+<body class="stars">
+<div class="page">
+  <section class="hero">
+    <h1 class="title">🚀 AI一夏 · 星际画猜总部</h1>
+    <p class="sub">欢迎来到全班协作挑战！红蓝两队轮流作画抢答，解锁今天最会表达的小画家。</p>
+    <div class="chips">
+      <div class="chip">轮次 <b id="round">1</b>/6</div>
+      <div class="chip">当前队伍 <b id="turnTeam">红队</b></div>
+      <div class="chip">倒计时 <b id="timer">45</b>s</div>
+    </div>
+  </section>
+
+  <section class="layout">
+    <div class="panel">
+      <h2>🛰 比赛控制台</h2>
+      <div class="teams">
+        <div class="team red">🔴 红队<div class="score" id="scoreA">0</div></div>
+        <div class="team blue">🔵 蓝队<div class="score" id="scoreB">0</div></div>
       </div>
-      <div class="btns"><button class="b2" id="start">▶ 开始</button><button class="b5" id="pause">⏸ 暂停</button><button class="b3" id="correct">✅ 猜对+10</button><button class="b4" id="skip">⏭ 跳过</button><button class="b6" id="nextRound">➡ 下一轮</button><button class="b5" id="reset">🔁 重置整局</button></div>
-      <div id="status" class="status">先让小画家点击“给小画家看词（3秒）”，其余同学闭眼或转身。</div>
-    </section>
-    <section class="card">
-      <div>🖌 画画区</div><div class="canvas-wrap"><canvas id="board" width="520" height="360"></canvas>
-      <div class="tools"><button id="clear">清空</button><button id="eraser">橡皮擦</button><button id="thin">细笔</button><button id="thick">粗笔</button><span class="dot" data-c="#333" style="background:#333"></span><span class="dot" data-c="#ff5d8f" style="background:#ff5d8f"></span><span class="dot" data-c="#5a8dff" style="background:#5a8dff"></span></div></div>
-    </section>
-  </div>
+      <div class="secret">
+        <div>🔒 词语默认隐藏</div>
+        <div id="wordMasked" class="wordMask">请点击“给小画家看词”</div>
+        <div id="tipMasked">提示将同步隐藏</div>
+      </div>
+      <div class="btn-grid">
+        <button id="showWord">👀 给小画家看词（3秒）</button>
+        <button id="newWord">🔄 换词</button>
+        <button id="start">▶ 开始</button>
+        <button id="pause">⏸ 暂停</button>
+        <button id="correct">✅ 猜对 +10</button>
+        <button id="skip">⏭ 跳过</button>
+        <button id="nextRound">➡ 下一轮</button>
+        <button id="reset">🔁 重置整局</button>
+      </div>
+      <div id="status" class="status">欢迎来到AI一夏画猜挑战！请先让小画家看词，再开始本轮。</div>
+    </div>
+
+    <div class="panel draw-wrap">
+      <h2>🎨 创作甲板（强化版）</h2>
+      <div class="toolbar">
+        <button id="thin">细笔</button><button id="mid">中笔</button><button id="thick">粗笔</button>
+        <button id="eraser">橡皮擦</button><button id="undo">撤销</button><button id="clear">清空</button>
+      </div>
+      <div class="toolbar2">
+        <div class="pal" id="palette"></div>
+        <select id="shape"><option value="none">自由画</option><option value="line">直线</option><option value="rect">矩形</option><option value="circle">圆形</option></select>
+        <input id="alpha" type="range" min="0.2" max="1" step="0.1" value="1" />
+        <button id="spray">星点喷洒</button>
+      </div>
+      <div class="canvas-shell"><canvas id="board" width="900" height="540"></canvas></div>
+    </div>
+  </section>
 </div>
-<div class="mask" id="mask"><div class="popup"><h2>仅给小画家看 👀</h2><div class="word" id="word">机器人老师</div><div class="tip" id="tip">提示：上课、讲台、AI</div><p class="count" id="count">3 秒后自动隐藏</p></div></div>
+
+<div class="mask" id="mask"><div class="modal"><h2>仅给小画家看 👀</h2><div id="word" class="w">太阳</div><div id="tip" class="t">提示：天上发光发热</div><p id="count" class="count">3 秒后自动隐藏</p></div></div>
+
 <script>
 const words=[{w:'太阳',t:'天上发光发热，白天常见'},{w:'月亮',t:'晚上会出现，像小船'},{w:'星星',t:'夜空一闪一闪'},{w:'白云',t:'天空中软软一团'},{w:'下雨',t:'天空落下小水滴'},{w:'彩虹',t:'雨后天空七彩弯弯桥'},{w:'小花',t:'花园里有香味'},{w:'大树',t:'有树干和树叶'},{w:'小草',t:'地上绿绿的'},{w:'苹果',t:'红红圆圆能吃'},{w:'香蕉',t:'黄黄弯弯的水果'},{w:'西瓜',t:'夏天常吃，切开红红的'},{w:'草莓',t:'红色小果子，有小点点'},{w:'橙子',t:'橙色圆圆水果'},{w:'葡萄',t:'一串串小圆球'},{w:'牛奶',t:'白白的饮品'},{w:'面包',t:'早餐常吃，软软的'},{w:'鸡蛋',t:'椭圆形，可以煎着吃'},{w:'米饭',t:'白白一粒粒，主食'},{w:'蛋糕',t:'过生日常吃'},{w:'小狗',t:'会汪汪叫'},{w:'小猫',t:'会喵喵叫'},{w:'小兔',t:'长耳朵爱跳'},{w:'小鸭',t:'会嘎嘎叫'},{w:'小鸡',t:'叽叽叫，黄黄的'},{w:'小鱼',t:'在水里游'},{w:'蝴蝶',t:'有漂亮翅膀'},{w:'蜜蜂',t:'会采蜜，嗡嗡飞'},{w:'熊猫',t:'黑白颜色，爱吃竹子'},{w:'长颈鹿',t:'脖子长长的'},{w:'铅笔',t:'写字画画用'},{w:'橡皮',t:'写错字可以擦掉'},{w:'书包',t:'背着去上学'},{w:'课本',t:'上课要看的书'},{w:'黑板',t:'老师写字的地方'},{w:'粉笔',t:'在黑板上写字'},{w:'尺子',t:'量长度，画直线'},{w:'剪刀',t:'剪纸用，注意安全'},{w:'水杯',t:'喝水用'},{w:'雨伞',t:'下雨天撑着走'},{w:'帽子',t:'戴在头上'},{w:'鞋子',t:'穿在脚上走路'},{w:'袜子',t:'穿在鞋子里面'},{w:'外套',t:'天气冷时穿'},{w:'手套',t:'冬天手不冷'},{w:'围巾',t:'围在脖子上'},{w:'牙刷',t:'早晚刷牙用'},{w:'毛巾',t:'洗脸后擦干'},{w:'肥皂',t:'洗手会有泡泡'},{w:'梳子',t:'梳头发用'},{w:'汽车',t:'在马路上跑'},{w:'公交车',t:'很多人一起坐'},{w:'自行车',t:'脚踩着前进'},{w:'红绿灯',t:'过马路要看它'},{w:'斑马线',t:'行人过马路走这里'},{w:'小船',t:'在水上前进'},{w:'飞机',t:'在天上飞'},{w:'火车',t:'长长一列在轨道上'},{w:'轮船',t:'大船在海上'},{w:'风筝',t:'有线牵着在天上飞'},{w:'气球',t:'轻轻的会飘'},{w:'玩具熊',t:'抱着睡觉的玩具'},{w:'积木',t:'一块块可以搭房子'},{w:'皮球',t:'拍一拍会弹'},{w:'跳绳',t:'甩起来跳'},{w:'滑梯',t:'从上往下滑'},{w:'秋千',t:'前后荡来荡去'},{w:'木马',t:'游乐园里会转'},{w:'拼图',t:'一片片拼完整'},{w:'蜡笔',t:'画画有很多颜色'},{w:'笑脸',t:'开心时的表情'},{w:'哭脸',t:'难过时会流泪'},{w:'爱心',t:'表示喜欢和关心'},{w:'小手',t:'用来拍手握手'},{w:'眼睛',t:'用来看东西'},{w:'耳朵',t:'用来听声音'},{w:'鼻子',t:'用来闻味道'},{w:'嘴巴',t:'用来说话吃饭'},{w:'牙齿',t:'咬东西，刷牙要保护'},{w:'肚子',t:'吃饱会鼓鼓的'},{w:'数字1',t:'像一根小棍'},{w:'数字2',t:'像小鸭子'},{w:'数字3',t:'像小耳朵'},{w:'数字8',t:'像两个圆圈'},{w:'圆形',t:'像太阳饼干'},{w:'三角形',t:'有三个角'},{w:'正方形',t:'四条边一样长'},{w:'爱读书',t:'安静看书学知识'},{w:'排队',t:'一个跟一个不插队'},{w:'洗手',t:'吃饭前要洗干净'},{w:'刷牙',t:'早晚各一次'},{w:'睡觉',t:'晚上闭眼休息'},{w:'起床',t:'早上从床上起来'},{w:'上学',t:'背书包去学校'},{w:'举手',t:'想发言先举手'},{w:'分享',t:'把好东西分给朋友'},{w:'谢谢',t:'有礼貌常说的话'},{w:'请',t:'请求帮助时先说'},{w:'对不起',t:'做错事要道歉'},{w:'六一儿童节',t:'小朋友快乐的节日'}];
 let round=1,maxRound=6,team=0,score=[0,0],left=45,timer=null,current=0;
-const $=id=>document.getElementById(id),roundEl=$('round'),turnTeam=$('turnTeam'),timerEl=$('timer'),scoreA=$('scoreA'),scoreB=$('scoreB'),wordEl=$('word'),tipEl=$('tip'),wordMasked=$('wordMasked'),tipMasked=$('tipMasked'),statusEl=$('status');
-function renderWord(){const o=words[current];wordEl.textContent=o.w;tipEl.textContent='提示：'+o.t;wordMasked.textContent='词语已隐藏';tipMasked.textContent='提示已隐藏'}
+const $=id=>document.getElementById(id); const roundEl=$('round'),turnTeam=$('turnTeam'),timerEl=$('timer'),scoreA=$('scoreA'),scoreB=$('scoreB'),wordEl=$('word'),tipEl=$('tip'),wordMasked=$('wordMasked'),tipMasked=$('tipMasked'),statusEl=$('status');
+function renderWord(){const o=words[current];wordEl.textContent=o.w;tipEl.textContent='提示：'+o.t;wordMasked.textContent='词语已隐藏';tipMasked.textContent='提示已隐藏';}
 function pickWord(){current=Math.floor(Math.random()*words.length);renderWord()}
 function setTeam(){turnTeam.textContent=team===0?'红队':'蓝队'}
 function tick(){left--;timerEl.textContent=left;if(left<=0){stop();statusEl.textContent='⏰ 时间到！点击“下一轮”。';}}
-function start(){if(timer) return;statusEl.textContent='开始作画！';timer=setInterval(tick,1000)} function stop(){clearInterval(timer);timer=null}
-function updateScore(){scoreA.textContent=score[0];scoreB.textContent=score[1]} function addScore(){score[team]+=10;updateScore();statusEl.textContent='答对+10！';pickWord()}
-function skipWord(){pickWord();statusEl.textContent='已换词';}
-function nextRound(){stop();round++;if(round>maxRound)return endGame();team=1-team;left=45;timerEl.textContent=left;roundEl.textContent=round;setTeam();pickWord();statusEl.textContent='换队完成：先给新小画家看词';}
-function endGame(){stop();let msg='平局';if(score[0]>score[1])msg='红队获胜';if(score[1]>score[0])msg='蓝队获胜';statusEl.textContent=`游戏结束：${msg}（红队 ${score[0]} : 蓝队 ${score[1]}）`}
-function resetAll(){stop();round=1;team=0;score=[0,0];left=45;roundEl.textContent=1;timerEl.textContent=45;setTeam();updateScore();pickWord();statusEl.textContent='已重置';clearBoard()}
+function start(){if(timer) return;statusEl.textContent='开始作画！同队同学快抢答。';timer=setInterval(tick,1000)}
+function stop(){clearInterval(timer);timer=null}
+function updateScore(){scoreA.textContent=score[0];scoreB.textContent=score[1]}
+function addScore(){score[team]+=10;updateScore();statusEl.textContent='答对+10！继续冲！';pickWord()}
+function skipWord(){pickWord();statusEl.textContent='已换词，继续作画。'}
+function nextRound(){stop();round++;if(round>maxRound)return endGame();team=1-team;left=45;timerEl.textContent=left;roundEl.textContent=round;setTeam();pickWord();statusEl.textContent='换队完成，请新小画家先看词。';}
+function endGame(){stop();let msg='平局';if(score[0]>score[1])msg='红队获胜';if(score[1]>score[0])msg='蓝队获胜';statusEl.textContent=`游戏结束：${msg}（红队 ${score[0]} : 蓝队 ${score[1]}）`;}
+function resetAll(){stop();round=1;team=0;score=[0,0];left=45;roundEl.textContent=1;timerEl.textContent=45;setTeam();updateScore();pickWord();statusEl.textContent='欢迎来到AI一夏画猜挑战！请先让小画家看词，再开始本轮。';clearBoard();history=[];}
 function showSecret(sec=3){const m=$('mask'),c=$('count');m.classList.add('show');let n=sec;c.textContent=`${n} 秒后自动隐藏`;const iv=setInterval(()=>{n--;c.textContent=`${n} 秒后自动隐藏`;if(n<=0){clearInterval(iv);m.classList.remove('show')}},1000)}
 $('showWord').onclick=()=>showSecret(3);$('newWord').onclick=pickWord;$('start').onclick=start;$('pause').onclick=stop;$('correct').onclick=addScore;$('skip').onclick=skipWord;$('nextRound').onclick=nextRound;$('reset').onclick=resetAll;
-setTeam();updateScore();pickWord();
-const canvas=$('board'),ctx=canvas.getContext('2d');let drawing=false,color='#333',size=4;function pos(e){const r=canvas.getBoundingClientRect();const p=e.touches?e.touches[0]:e;return{x:(p.clientX-r.left)*(canvas.width/r.width),y:(p.clientY-r.top)*(canvas.height/r.height)}}
-function startDraw(e){drawing=true;const p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y)} function draw(e){if(!drawing)return;const p=pos(e);ctx.lineTo(p.x,p.y);ctx.strokeStyle=color;ctx.lineWidth=size;ctx.lineCap='round';ctx.stroke()} function endDraw(){drawing=false}
-canvas.addEventListener('mousedown',startDraw);canvas.addEventListener('mousemove',draw);window.addEventListener('mouseup',endDraw);canvas.addEventListener('touchstart',e=>{e.preventDefault();startDraw(e)},{passive:false});canvas.addEventListener('touchmove',e=>{e.preventDefault();draw(e)},{passive:false});window.addEventListener('touchend',endDraw);
-function clearBoard(){ctx.clearRect(0,0,canvas.width,canvas.height)} $('clear').onclick=clearBoard;$('eraser').onclick=()=>{color='#fff';size=20};$('thin').onclick=()=>size=4;$('thick').onclick=()=>size=10;document.querySelectorAll('.dot').forEach(d=>d.onclick=()=>color=d.dataset.c);
-</script></body></html>
+
+const canvas=$('board'),ctx=canvas.getContext('2d');let drawing=false,color='#2d2d2d',size=4,shape='none',alpha=1,spray=false,startPt=null,history=[];
+const colors=['#2d2d2d','#ff4d6d','#ff9f1c','#ffd166','#06d6a0','#118ab2','#6c63ff','#b5179e','#ffffff'];
+$('palette').innerHTML=colors.map(c=>`<span class="dot" data-c="${c}" style="background:${c}"></span>`).join('');
+document.querySelectorAll('.dot').forEach(d=>d.onclick=()=>{color=d.dataset.c;spray=false});
+$('thin').onclick=()=>{size=3;spray=false};$('mid').onclick=()=>{size=6;spray=false};$('thick').onclick=()=>{size=11;spray=false};$('eraser').onclick=()=>{color='#ffffff';size=18;spray=false};
+$('shape').onchange=e=>shape=e.target.value;$('alpha').oninput=e=>alpha=parseFloat(e.target.value);$('spray').onclick=()=>spray=!spray;
+function pos(e){const r=canvas.getBoundingClientRect();const p=e.touches?e.touches[0]:e;return{x:(p.clientX-r.left)*(canvas.width/r.width),y:(p.clientY-r.top)*(canvas.height/r.height)}}
+function saveState(){history.push(canvas.toDataURL()); if(history.length>25) history.shift();}
+function restore(data){const img=new Image(); img.onload=()=>{ctx.clearRect(0,0,canvas.width,canvas.height); ctx.drawImage(img,0,0)}; img.src=data;}
+function drawShape(to){ctx.globalAlpha=alpha;ctx.strokeStyle=color;ctx.lineWidth=size;ctx.lineCap='round';ctx.lineJoin='round';
+  if(shape==='line'){ctx.beginPath();ctx.moveTo(startPt.x,startPt.y);ctx.lineTo(to.x,to.y);ctx.stroke();}
+  if(shape==='rect'){ctx.strokeRect(startPt.x,startPt.y,to.x-startPt.x,to.y-startPt.y)}
+  if(shape==='circle'){const r=Math.hypot(to.x-startPt.x,to.y-startPt.y);ctx.beginPath();ctx.arc(startPt.x,startPt.y,r,0,Math.PI*2);ctx.stroke();}
+  ctx.globalAlpha=1;
+}
+function sprayDot(p){ctx.globalAlpha=alpha;for(let i=0;i<20;i++){const a=Math.random()*Math.PI*2,r=Math.random()*size*2;ctx.fillStyle=color;ctx.fillRect(p.x+Math.cos(a)*r,p.y+Math.sin(a)*r,1.5,1.5)}ctx.globalAlpha=1}
+function startDraw(e){drawing=true;startPt=pos(e);saveState(); if(shape==='none'&&!spray){ctx.beginPath();ctx.moveTo(startPt.x,startPt.y);}}
+function moveDraw(e){if(!drawing) return; const p=pos(e); if(spray){sprayDot(p); return;} if(shape==='none'){ctx.globalAlpha=alpha;ctx.strokeStyle=color;ctx.lineWidth=size;ctx.lineTo(p.x,p.y);ctx.stroke();ctx.globalAlpha=1;return;} restore(history[history.length-1]); drawShape(p);}
+function endDraw(){drawing=false;startPt=null}
+canvas.addEventListener('mousedown',startDraw);canvas.addEventListener('mousemove',moveDraw);window.addEventListener('mouseup',endDraw);
+canvas.addEventListener('touchstart',e=>{e.preventDefault();startDraw(e)},{passive:false});canvas.addEventListener('touchmove',e=>{e.preventDefault();moveDraw(e)},{passive:false});window.addEventListener('touchend',endDraw);
+function clearBoard(){ctx.clearRect(0,0,canvas.width,canvas.height)}
+$('clear').onclick=()=>{saveState();clearBoard()};$('undo').onclick=()=>{if(history.length) restore(history.pop())};
+
+setTeam();updateScore();pickWord();statusEl.textContent='欢迎来到AI一夏画猜挑战！请先让小画家看词，再开始本轮。';
+</script>
+</body>
+</html>
