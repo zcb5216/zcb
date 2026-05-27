@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI一夏 超好玩｜简洁萌趣版</title>
+<style>
+  :root{--bg1:#ffeef8;--bg2:#e8f5ff;--card:#ffffffd9;--ink:#3a3561;--main:#7a8cff;--line:#d7e1ff}
+  *{box-sizing:border-box} body{margin:0;font-family:"Microsoft YaHei",sans-serif;color:var(--ink);background:linear-gradient(135deg,var(--bg1),var(--bg2));}
+  .wrap{max-width:1200px;margin:12px auto;padding:0 12px}
+  .top{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .title{font-size:24px;font-weight:900}.chips{display:flex;gap:8px;flex-wrap:wrap}.chip{background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 10px;font-weight:700}
+  .main{margin-top:10px;display:grid;grid-template-columns:320px 1fr;gap:10px;min-height:78vh}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px}
+  .btn{width:100%;padding:10px;border:1px solid #cfdcff;border-radius:10px;background:#fff;font-weight:800;cursor:pointer}
+  .btn.primary{background:var(--main);color:#fff;border-color:var(--main)}
+  .btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+  .status{margin-top:8px;background:#f1f5ff;border:1px solid #d8e2ff;border-radius:10px;padding:8px;font-size:14px}
+  .draw{display:grid;grid-template-rows:auto 1fr;gap:8px;height:100%}
+  .tools{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+  .dot{height:34px;border-radius:8px;border:1px solid #d0d7ee;cursor:pointer}
+  .canvas-wrap{background:#fff;border:1px solid #d7e1ff;border-radius:12px;padding:8px;height:100%}
+  canvas{width:100%;height:100%;min-height:580px;background:#fff;border-radius:8px;touch-action:none}
+  .mask{position:fixed;inset:0;background:#1f2549bf;display:none;align-items:center;justify-content:center;padding:16px}.mask.show{display:flex}
+  .modal{background:#fff;border-radius:12px;padding:16px;max-width:520px;width:100%;text-align:center}.word{font-size:42px;font-weight:900}.tip{margin-top:6px}
+  @media (max-width:900px){.main{grid-template-columns:1fr;min-height:auto}canvas{min-height:420px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="title">🌈 AI一夏 · 画猜简洁版</div>
+    <div class="chips">
+      <div class="chip">轮次 <b id="round">1</b>/6</div>
+      <div class="chip">队伍 <b id="turnTeam">红队</b></div>
+      <div class="chip">倒计时 <b id="timer">45</b>s</div>
+      <div class="chip">🔴 <b id="scoreA">0</b> : 🔵 <b id="scoreB">0</b></div>
+    </div>
+  </div>
+
+  <div class="main">
+    <aside class="panel">
+      <button class="btn primary" id="showWord">👀 给小画家看词（3秒）</button>
+      <div class="btns">
+        <button class="btn" id="start">开始</button>
+        <button class="btn" id="pause">暂停</button>
+        <button class="btn" id="correct">猜对+10</button>
+        <button class="btn" id="nextRound">下一轮</button>
+      </div>
+      <div class="btns">
+        <button class="btn" id="newWord">换词</button>
+        <button class="btn" id="reset">重置</button>
+      </div>
+      <div class="status" id="status">欢迎来到AI一夏！先给小画家看词，再开始作画。</div>
+      <div class="status">词语状态：<b id="wordMasked">已隐藏</b></div>
+    </aside>
+
+    <section class="panel draw">
+      <div class="tools">
+        <button class="btn" id="thin">细笔</button>
+        <button class="btn" id="thick">粗笔</button>
+        <button class="btn" id="eraser">橡皮</button>
+        <button class="btn" id="undo">撤销</button>
+        <button class="btn" id="clear">清空</button>
+        <select id="shape" class="btn"><option value="none">自由画</option><option value="line">直线</option><option value="rect">矩形</option><option value="circle">圆形</option></select>
+        <button class="dot" data-c="#2d2d2d" style="background:#2d2d2d"></button>
+        <button class="dot" data-c="#ff5d8f" style="background:#ff5d8f"></button>
+        <button class="dot" data-c="#5a8dff" style="background:#5a8dff"></button>
+        <button class="dot" data-c="#2ec4b6" style="background:#2ec4b6"></button>
+        <button class="dot" data-c="#ff9f1c" style="background:#ff9f1c"></button>
+        <button class="dot" data-c="#8f7bff" style="background:#8f7bff"></button>
+      </div>
+      <div class="canvas-wrap"><canvas id="board" width="1200" height="760"></canvas></div>
+    </section>
+  </div>
+</div>
+
+<div class="mask" id="mask"><div class="modal"><h2>仅给小画家看</h2><div class="word" id="word">太阳</div><div class="tip" id="tip">提示：天上发光发热</div><p id="count">3 秒后自动隐藏</p></div></div>
+
+<script>
+const words=[{w:'太阳',t:'天上发光发热，白天常见'},{w:'月亮',t:'晚上会出现，像小船'},{w:'星星',t:'夜空一闪一闪'},{w:'白云',t:'天空中软软一团'},{w:'下雨',t:'天空落下小水滴'},{w:'彩虹',t:'雨后天空七彩弯弯桥'},{w:'小花',t:'花园里有香味'},{w:'大树',t:'有树干和树叶'},{w:'小草',t:'地上绿绿的'},{w:'苹果',t:'红红圆圆能吃'},{w:'香蕉',t:'黄黄弯弯的水果'},{w:'西瓜',t:'夏天常吃，切开红红的'},{w:'草莓',t:'红色小果子，有小点点'},{w:'橙子',t:'橙色圆圆水果'},{w:'葡萄',t:'一串串小圆球'},{w:'牛奶',t:'白白的饮品'},{w:'面包',t:'早餐常吃，软软的'},{w:'鸡蛋',t:'椭圆形，可以煎着吃'},{w:'米饭',t:'白白一粒粒，主食'},{w:'蛋糕',t:'过生日常吃'},{w:'小狗',t:'会汪汪叫'},{w:'小猫',t:'会喵喵叫'},{w:'小兔',t:'长耳朵爱跳'},{w:'小鸭',t:'会嘎嘎叫'},{w:'小鸡',t:'叽叽叫，黄黄的'},{w:'小鱼',t:'在水里游'},{w:'蝴蝶',t:'有漂亮翅膀'},{w:'蜜蜂',t:'会采蜜，嗡嗡飞'},{w:'熊猫',t:'黑白颜色，爱吃竹子'},{w:'长颈鹿',t:'脖子长长的'}];
+let round=1,maxRound=6,team=0,score=[0,0],left=45,timer=null,current=0;
+const $=id=>document.getElementById(id);
+const roundEl=$('round'),turnTeam=$('turnTeam'),timerEl=$('timer'),scoreA=$('scoreA'),scoreB=$('scoreB'),statusEl=$('status'),wordEl=$('word'),tipEl=$('tip'),wordMasked=$('wordMasked');
+function pickWord(){current=Math.floor(Math.random()*words.length);wordEl.textContent=words[current].w;tipEl.textContent='提示：'+words[current].t;wordMasked.textContent='已隐藏';}
+function setTeam(){turnTeam.textContent=team===0?'红队':'蓝队'}
+function tick(){left--;timerEl.textContent=left;if(left<=0){pause();statusEl.textContent='时间到，请点下一轮';}}
+function start(){if(timer) return;timer=setInterval(tick,1000);statusEl.textContent='开始作画！'}
+function pause(){clearInterval(timer);timer=null}
+function correct(){score[team]+=10;scoreA.textContent=score[0];scoreB.textContent=score[1];statusEl.textContent='答对+10！';pickWord()}
+function nextRound(){pause();round++;if(round>maxRound){statusEl.textContent=`结束：红队${score[0]} 蓝队${score[1]}`;return;}team=1-team;left=45;timerEl.textContent=45;roundEl.textContent=round;setTeam();pickWord();statusEl.textContent='换队完成，先看词再开始。'}
+function resetAll(){pause();round=1;team=0;score=[0,0];left=45;roundEl.textContent=1;timerEl.textContent=45;scoreA.textContent=0;scoreB.textContent=0;setTeam();pickWord();statusEl.textContent='欢迎来到AI一夏！先给小画家看词，再开始作画。';clearBoard();history=[];}
+function showSecret(sec=3){const m=$('mask'),c=$('count');m.classList.add('show');let n=sec;c.textContent=`${n} 秒后自动隐藏`;const iv=setInterval(()=>{n--;c.textContent=`${n} 秒后自动隐藏`;if(n<=0){clearInterval(iv);m.classList.remove('show')}},1000)}
+$('showWord').onclick=()=>showSecret(3);$('newWord').onclick=pickWord;$('start').onclick=start;$('pause').onclick=pause;$('correct').onclick=correct;$('nextRound').onclick=nextRound;$('reset').onclick=resetAll;
+
+const canvas=$('board'),ctx=canvas.getContext('2d');let drawing=false,color='#2d2d2d',size=4,shape='none',startPt=null,history=[];
+function pos(e){const r=canvas.getBoundingClientRect();const p=e.touches?e.touches[0]:e;return{x:(p.clientX-r.left)*(canvas.width/r.width),y:(p.clientY-r.top)*(canvas.height/r.height)}}
+function save(){history.push(canvas.toDataURL());if(history.length>20)history.shift()}
+function restore(u){const i=new Image();i.onload=()=>{ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(i,0,0)};i.src=u}
+function sDraw(e){drawing=true;startPt=pos(e);save();if(shape==='none'){ctx.beginPath();ctx.moveTo(startPt.x,startPt.y)}}
+function mDraw(e){if(!drawing) return;const p=pos(e);if(shape==='none'){ctx.strokeStyle=color;ctx.lineWidth=size;ctx.lineCap='round';ctx.lineTo(p.x,p.y);ctx.stroke();return;}restore(history[history.length-1]);ctx.strokeStyle=color;ctx.lineWidth=size;if(shape==='line'){ctx.beginPath();ctx.moveTo(startPt.x,startPt.y);ctx.lineTo(p.x,p.y);ctx.stroke()}if(shape==='rect'){ctx.strokeRect(startPt.x,startPt.y,p.x-startPt.x,p.y-startPt.y)}if(shape==='circle'){const r=Math.hypot(p.x-startPt.x,p.y-startPt.y);ctx.beginPath();ctx.arc(startPt.x,startPt.y,r,0,Math.PI*2);ctx.stroke()}}
+function eDraw(){drawing=false;startPt=null}
+canvas.addEventListener('mousedown',sDraw);canvas.addEventListener('mousemove',mDraw);window.addEventListener('mouseup',eDraw);
+canvas.addEventListener('touchstart',e=>{e.preventDefault();sDraw(e)},{passive:false});canvas.addEventListener('touchmove',e=>{e.preventDefault();mDraw(e)},{passive:false});window.addEventListener('touchend',eDraw);
+function clearBoard(){ctx.clearRect(0,0,canvas.width,canvas.height)}
+$('thin').onclick=()=>size=3;$('thick').onclick=()=>size=9;$('eraser').onclick=()=>{color='#fff';size=16};$('undo').onclick=()=>{if(history.length)restore(history.pop())};$('clear').onclick=()=>{save();clearBoard()};$('shape').onchange=e=>shape=e.target.value;
+document.querySelectorAll('.dot').forEach(d=>d.onclick=()=>{color=d.dataset.c});
+setTeam();pickWord();
+</script>
+</body>
+</html>
